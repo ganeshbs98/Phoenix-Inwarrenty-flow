@@ -1,0 +1,39 @@
+name: Postman Collection Workflow 
+on:
+  push: # for evry push it will trigger
+    branches: [main]
+      #- main this is the another way of writing branch down the branches
+  workflow_dispatch: # this is for mannual trigger 
+  schedule: 
+    - cron : 30 02 * * * # 8 am IST
+    - cron : 00 14 * * * # 7.30 pm IST
+
+jobs:
+  run-postman-tests:
+    runs-on : ubuntu-latest
+
+    steps:
+      - name : checkout the code
+        uses: actions/checkout@v4.2.2
+
+      - name : nodejs set up and npm
+        uses: actions/setup-node@v3.9.1
+        with :
+          node-version: '22'
+
+      - name : newman package installation
+        run : | 
+               npm i -g newman
+               npm i -g newman-reporter-htmlextra
+
+      - name : run the postman collection with newman
+        run : | 
+              newman run 'Inwarranty-flow Collection Copy.postman_collection.json' \
+              -e Qa.postman_environment1.json \
+               -d testdata.csv \
+              -r cli,htmlextra 
+             
+        
+      
+        
+      
